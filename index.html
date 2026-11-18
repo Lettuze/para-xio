@@ -43,6 +43,12 @@
   #pull:hover{background:var(--red)}
   .legend{max-width:420px;margin-top:26px;color:var(--muted);font-size:17px;font-style:italic}
 
+  #album{position:relative;z-index:2;text-align:center;padding:40px 20px 10px}
+  #album h2,#album p{display:inline-block;background:rgba(23,17,15,.85);box-shadow:0 0 28px 14px rgba(23,17,15,.85);border-radius:12px}
+  #album h2{font-family:"Caveat",cursive;font-weight:700;font-size:clamp(44px,10vw,72px);color:var(--ink);line-height:1.05;
+    text-shadow:0 0 22px rgba(226,59,78,.45);padding:4px 18px}
+  #album p{display:block;width:max-content;margin:6px auto 0;font-family:"Caveat",cursive;font-size:24px;color:var(--red-soft);padding:0 12px}
+
   /* nudos */
   .knot{position:relative;z-index:2;min-height:78vh;display:flex;align-items:center;padding:40px 6vw}
   .knot:nth-of-type(odd){justify-content:flex-start}
@@ -125,6 +131,11 @@
   <button id="pull">jala el hilo ♥</button>
   <p class="legend">Dicen que un hilo rojo invisible une a dos personas destinadas a encontrarse. Puede estirarse o enredarse, pero nunca romperse.</p>
 </section>
+
+<header id="album">
+  <h2>Nuestros nudos favoritos</h2>
+  <p>sigue el hilo ♥</p>
+</header>
 
 <!-- Nudos: cambia las frases por las tuyas -->
 <section class="knot"><div class="card">
