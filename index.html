@@ -69,6 +69,11 @@
   #heartSpot{width:min(260px,62vw);aspect-ratio:1;position:relative}
   #heartSpot.beat{animation:beat 1.05s ease-in-out infinite}
   @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.07)}30%{transform:scale(.99)}45%{transform:scale(1.04)}}
+  #initials{position:absolute;left:0;right:0;top:46%;transform:translateY(-50%);text-align:center;
+    font-family:"Caveat",cursive;font-weight:700;font-size:clamp(40px,10vw,64px);color:var(--ink);
+    text-shadow:0 0 18px rgba(226,59,78,.6);opacity:0;transition:opacity 1.2s ease .4s}
+  #initials span{color:var(--red-soft)}
+  #initials.show{opacity:1}
   #name{font-family:"Caveat",cursive;font-size:clamp(46px,11vw,78px);margin-top:18px;color:var(--ink)}
   #name span{opacity:0;display:inline-block;transform:translateY(10px);transition:.5s}
   #name.show span{opacity:1;transform:none}
@@ -178,7 +183,7 @@
 </div></section>
 
 <section id="heart">
-  <div id="heartSpot"></div>
+  <div id="heartSpot"><div id="initials">S <span>+</span> X</div></div>
   <div id="name" aria-label="Xio"></div>
 </section>
 
@@ -271,6 +276,7 @@
     if (p > .985 && !heartDone) {
       heartDone = true;
       nameEl.classList.add('show');
+      document.getElementById('initials').classList.add('show');
       [...nameEl.children].forEach((s, i) => s.style.transitionDelay = (i * .25) + 's');
       if (!audio.paused) heartSpot.classList.add('beat');
     }
