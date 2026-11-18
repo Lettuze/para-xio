@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Para mi Xio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#c8102e; --red-soft:#e23b4e; --ink:#f3e9dc; --muted:#b9a99a; --table:#17110f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--table); color:var(--ink);
+    font-family:"Cormorant Garamond",Georgia,serif; font-size:19px; line-height:1.5;
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(120,60,40,.18), transparent 60%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 2px, transparent 2px 9px);
+    overflow-x:hidden; padding-bottom:110px;
+  }
+  .hand{font-family:"Caveat",cursive}
+
+  /* hilo */
+  #thread{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:1;overflow:visible}
+  #thread path{fill:none;stroke:var(--red);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.6))}
+  #thread .fuzz{stroke:var(--red-soft);stroke-width:2;opacity:.55;stroke-dasharray:2 7}
+
+  /* intro */
+  #intro{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;position:relative;z-index:2}
+  #intro h1{font-family:"Caveat",cursive;font-size:clamp(56px,13vw,104px);font-weight:700;color:var(--ink);line-height:1}
+  #intro .sub{color:var(--muted);font-style:italic;margin-top:10px;font-size:20px}
+  .yarn{width:86px;height:86px;border-radius:50%;margin:36px auto 18px;position:relative;
+    background:radial-gradient(circle at 35% 30%, #ff5a6b, var(--red) 55%, #6d0716);
+    box-shadow:0 10px 30px rgba(200,16,46,.35)}
+  .yarn::before,.yarn::after{content:"";position:absolute;inset:8px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.18);transform:rotate(35deg) scaleX(.55)}
+  .yarn::after{transform:rotate(-40deg) scaleX(.5)}
+  #pull{margin-top:6px;background:none;border:1.5px solid var(--red);color:var(--ink);
+    font-family:"Caveat",cursive;font-size:28px;padding:8px 26px;border-radius:999px;cursor:pointer;transition:.25s}
+  #pull:hover{background:var(--red)}
+  .legend{max-width:420px;margin-top:26px;color:var(--muted);font-size:17px;font-style:italic}
+
+  /* nudos */
+  .knot{position:relative;z-index:2;min-height:78vh;display:flex;align-items:center;padding:40px 6vw}
+  .knot:nth-of-type(odd){justify-content:flex-start}
+  .knot:nth-of-type(even){justify-content:flex-end}
+  .card{display:flex;gap:26px;align-items:center;max-width:720px;width:100%;
+    opacity:0;transform:translateY(40px);transition:opacity 1s ease, transform 1s ease}
+  .knot:nth-of-type(even) .card{flex-direction:row-reverse;text-align:right}
+  .card.show{opacity:1;transform:none}
+  .polaroid{background:#f7f2ea;padding:10px 10px 38px;width:min(300px,52vw);flex-shrink:0;
+    box-shadow:0 18px 40px rgba(0,0,0,.55);transform:rotate(var(--r,-3deg));position:relative}
+  .polaroid img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;filter:saturate(.92) contrast(1.03)}
+  .polaroid .pin{position:absolute;top:-9px;left:50%;width:18px;height:18px;margin-left:-9px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ff6b7a,var(--red) 60%,#5a0612);box-shadow:0 2px 4px rgba(0,0,0,.5)}
+  .note .when{font-family:"Caveat",cursive;color:var(--red-soft);font-size:24px}
+  .note p{font-family:"Caveat",cursive;font-size:clamp(25px,4.6vw,33px);line-height:1.2;color:var(--ink)}
+
+  /* corazon */
+  #heart{position:relative;z-index:2;min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
+  #heartSpot{width:min(260px,62vw);aspect-ratio:1;position:relative}
+  #heartSpot.beat{animation:beat 1.05s ease-in-out infinite}
+  @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.07)}30%{transform:scale(.99)}45%{transform:scale(1.04)}}
+  #name{font-family:"Caveat",cursive;font-size:clamp(46px,11vw,78px);margin-top:18px;color:var(--ink)}
+  #name span{opacity:0;display:inline-block;transform:translateY(10px);transition:.5s}
+  #name.show span{opacity:1;transform:none}
+
+  /* carta */
+  #carta{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:20px 20px 80px}
+  .roll{width:min(560px,92vw);cursor:pointer;background:none;border:none;color:inherit;font:inherit}
+  .rod{height:22px;border-radius:11px;background:linear-gradient(#e9dcc6,#b9a68a);box-shadow:0 6px 14px rgba(0,0,0,.5)}
+  .paper{background:#f4ecdf;color:#3a2a22;overflow:hidden;max-height:0;transition:max-height 2.2s cubic-bezier(.3,.7,.2,1);
+    margin:0 14px;box-shadow:inset 0 0 40px rgba(120,80,40,.18)}
+  .paper .inner{padding:34px 30px 30px}
+  .paper h2{font-family:"Caveat",cursive;font-size:36px;color:var(--red);margin-bottom:10px}
+  .paper p{font-family:"Caveat",cursive;font-size:25px;line-height:1.35;margin-bottom:14px}
+  .paper .sign{text-align:right;font-size:28px}
+  .tie{font-family:"Caveat",cursive;color:var(--muted);font-size:24px;margin-top:14px;text-align:center}
+  .roll.open .tie{display:none}
+
+  /* reproductor */
+  #player{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:10;width:min(520px,calc(100vw - 24px));
+    display:flex;align-items:center;gap:14px;padding:12px 18px;border-radius:18px;
+    background:rgba(30,20,18,.86);backdrop-filter:blur(8px);border:1px solid rgba(200,16,46,.35);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  #pp{width:44px;height:44px;border-radius:50%;border:none;background:var(--red);color:#fff;font-size:18px;cursor:pointer;flex-shrink:0}
+  #player .meta{flex:1;min-width:0}
+  #player .t{font-family:"Caveat",cursive;font-size:22px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #player .s{font-size:14px;color:var(--muted);font-style:italic}
+  #bar{height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin-top:7px;cursor:pointer;position:relative}
+  #fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red-soft);border-radius:2px}
+  #time{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;flex-shrink:0}
+
+  @media (max-width:640px){
+    .card,.knot:nth-of-type(even) .card{flex-direction:column;text-align:center;gap:18px}
+    .knot{justify-content:center!important;min-height:auto;padding:70px 20px}
+    .polaroid{width:min(280px,74vw)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .card{transition:none;opacity:1;transform:none}
+    #heartSpot.beat{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<svg id="thread" aria-hidden="true"><path id="tp"/><path id="tf" class="fuzz"/></svg>
+
+<section id="intro">
+  <h1>Para mi Xio</h1>
+  <div class="sub">3 meses · 20 de noviembre de 2026</div>
+  <div class="yarn" aria-hidden="true"></div>
+  <button id="pull">jala el hilo ♥</button>
+  <p class="legend">Dicen que un hilo rojo invisible une a dos personas destinadas a encontrarse. Puede estirarse o enredarse, pero nunca romperse.</p>
+</section>
+
+<!-- Nudos: cambia las frases por las tuyas -->
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:-4deg"><span class="pin"></span><img src="img/1.jpg" alt="Nosotros en una foto instantánea"></div>
+  <div class="note"><div class="when">el comienzo</div><p>No sabía que estabas por entrar a mi vida, y mira todo lo que cambió.</p></div>
+</div></section>
+
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:3deg"><span class="pin"></span><img src="img/2.jpg" alt="Un beso en el ascensor"></div>
+  <div class="note"><div class="when">tú y yo</div><p>Cualquier lugar se vuelve el mejor si estás tú.</p></div>
+</div></section>
+
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:-2deg"><span class="pin"></span><img src="img/3.jpg" alt="Un abrazo"></div>
+  <div class="note"><div class="when">tus abrazos</div><p>Ahí es donde se me para el tiempo.</p></div>
+</div></section>
+
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:4deg"><span class="pin"></span><img src="img/4.jpg" alt="Flores"></div>
+  <div class="note"><div class="when">20 de septiembre</div><p>Nuestro primer mes. Y desde ahí, cada día un poquito más.</p></div>
+</div></section>
+
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:-3deg"><span class="pin"></span><img src="img/5.jpg" alt="Tus ojitos"></div>
+  <div class="note"><div class="when">tus ojitos</div><p>Dices que no puedes mirarme, pero yo daría lo que fuera por quedarme viéndolos.</p></div>
+</div></section>
+
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:2deg"><span class="pin"></span><img src="img/6.jpg" alt="Nuestras manos formando un corazón"></div>
+  <div class="note"><div class="when">nuestras manos</div><p>Juntas hacen un corazón. Tiene sentido.</p></div>
+</div></section>
+
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:-4deg"><span class="pin"></span><img src="img/7.jpg" alt="Santi sonriendo"></div>
+  <div class="note"><div class="when">el culpable</div><p>Esta sonrisa es tu culpa, que conste.</p></div>
+</div></section>
+
+<section class="knot"><div class="card">
+  <div class="polaroid" style="--r:3deg"><span class="pin"></span><img src="img/8.jpg" alt="Santi haciendo un corazón con las manos"></div>
+  <div class="note"><div class="when">para ti</div><p>Todo lo que viene, lo quiero contigo.</p></div>
+</div></section>
+
+<section id="heart">
+  <div id="heartSpot"></div>
+  <div id="name" aria-label="Xio"></div>
+</section>
+
+<section id="carta">
+  <button class="roll" id="roll" aria-expanded="false">
+    <div class="rod"></div>
+    <div class="paper" id="paper"><div class="inner">
+      <h2>¿Por qué esta canción?</h2>
+      <p>Sunkissed Lola habla de ese momento en que ves a la persona que amas y el tiempo se detiene. Así me siento cuando te veo llegar, amor.</p>
+      <p>Me gusta porque repite una y otra vez una sola idea: que eres la única. No necesita más, y yo tampoco.</p>
+      <p>No soy cantante, pero quería que la escucharas con mi voz. Cada vez que la pongas, acuérdate de que la canté pensando en ti.</p>
+      <p>Feliz 3 meses, mi Xio. Que este hilo siga creciendo.</p>
+      <p class="sign">Te amo, Santi ♥</p>
+    </div></div>
+    <div class="rod"></div>
+    <div class="tie">toca para desenrollar la carta</div>
+  </button>
+</section>
+
+<div id="player">
+  <button id="pp" aria-label="Reproducir">▶</button>
+  <div class="meta">
+    <div class="t">Sunkissed Lola</div>
+    <div class="s">Pasilyo · cover de Santi para ti</div>
+    <div id="bar"><div id="fill"></div></div>
+  </div>
+  <div id="time">0:00</div>
+</div>
+<audio id="song" src="cover.mp3" preload="metadata"></audio>
+
+<script>
+(() => {
+  const svg = document.getElementById('thread');
+  const tp = document.getElementById('tp'), tf = document.getElementById('tf');
+  const audio = document.getElementById('song'), pp = document.getElementById('pp');
+  const heartSpot = document.getElementById('heartSpot'), nameEl = document.getElementById('name');
+  let L = 1, startY = 0, endY = 1, heartDone = false;
+
+  'Xio'.split('').forEach(c => { const s = document.createElement('span'); s.textContent = c; nameEl.appendChild(s); });
+
+  function anchor(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2 + scrollX, y: r.top + r.height / 2 + scrollY };
+  }
+
+  function build() {
+    const W = document.documentElement.clientWidth;
+    const H = document.documentElement.scrollHeight;
+    svg.setAttribute('width', W); svg.setAttribute('height', H);
+    svg.style.height = H + 'px';
+    const yarn = anchor(document.querySelector('.yarn'));
+    const pts = [yarn];
+    document.querySelectorAll('.polaroid').forEach(p => {
+      const r = p.getBoundingClientRect();
+      pts.push({ x: r.left + r.width / 2 + scrollX, y: r.top + scrollY - 4 });
+    });
+    // corazón
+    const h = heartSpot.getBoundingClientRect();
+    const cx = h.left + h.width / 2 + scrollX, top = h.top + scrollY, s = h.width;
+    const ht = { x: cx, y: top + s * .28 };
+    pts.push(ht);
+
+    let d = `M${pts[0].x},${pts[0].y}`;
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i];
+      const sway = (i % 2 ? 1 : -1) * Math.min(W * .32, 220);
+      const midY = (a.y + b.y) / 2;
+      d += ` C${a.x + sway},${a.y + (midY - a.y) * .7} ${b.x - sway},${b.y - (b.y - midY) * .7} ${b.x},${b.y}`;
+    }
+    // trazo del corazón
+    const k = s / 2;
+    d += ` C${cx - k * .2},${top + s * .02} ${cx - k * 1.05},${top + s * .02} ${cx - k * .98},${top + s * .38}`
+       + ` C${cx - k * .92},${top + s * .62} ${cx - k * .35},${top + s * .78} ${cx},${top + s * .98}`
+       + ` C${cx + k * .35},${top + s * .78} ${cx + k * .92},${top + s * .62} ${cx + k * .98},${top + s * .38}`
+       + ` C${cx + k * 1.05},${top + s * .02} ${cx + k * .2},${top + s * .02} ${cx},${ht.y}`;
+
+    tp.setAttribute('d', d); tf.setAttribute('d', d);
+    L = tp.getTotalLength();
+    tp.style.strokeDasharray = L;
+    startY = yarn.y - innerHeight * .6;
+    endY = top + s - innerHeight * .55;
+    draw();
+  }
+
+  function draw() {
+    const p = Math.max(0, Math.min(1, (scrollY - startY) / (endY - startY)));
+    tp.style.strokeDashoffset = L * (1 - p);
+    tf.style.opacity = p > .02 ? .55 : 0;
+    tf.style.clipPath = `inset(0 0 ${100 - p * 100}% 0)`;
+    if (p > .985 && !heartDone) {
+      heartDone = true;
+      nameEl.classList.add('show');
+      [...nameEl.children].forEach((s, i) => s.style.transitionDelay = (i * .25) + 's');
+      if (!audio.paused) heartSpot.classList.add('beat');
+    }
+  }
+
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); }
+  }), { threshold: .3 });
+  document.querySelectorAll('.card').forEach(c => io.observe(c));
+
+  addEventListener('scroll', () => requestAnimationFrame(draw), { passive: true });
+  addEventListener('resize', build);
+  document.querySelectorAll('img').forEach(i => i.complete || i.addEventListener('load', build));
+  document.fonts && document.fonts.ready.then(build);
+  addEventListener('load', build);
+  build();
+
+  // audio
+  const fmt = t => isFinite(t) ? `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}` : '0:00';
+  async function play() { try { await audio.play(); } catch (e) {} }
+  pp.addEventListener('click', () => audio.paused ? play() : audio.pause());
+  audio.addEventListener('play', () => { pp.textContent = '❚❚'; pp.setAttribute('aria-label', 'Pausar'); if (heartDone) heartSpot.classList.add('beat'); });
+  audio.addEventListener('pause', () => { pp.textContent = '▶'; pp.setAttribute('aria-label', 'Reproducir'); heartSpot.classList.remove('beat'); });
+  audio.addEventListener('timeupdate', () => {
+    document.getElementById('fill').style.width = (audio.currentTime / audio.duration * 100 || 0) + '%';
+    document.getElementById('time').textContent = fmt(audio.currentTime);
+  });
+  document.getElementById('bar').addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    if (audio.duration) audio.currentTime = (e.clientX - r.left) / r.width * audio.duration;
+  });
+  document.getElementById('pull').addEventListener('click', () => {
+    play();
+    document.querySelector('.knot').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // carta
+  const roll = document.getElementById('roll'), paper = document.getElementById('paper');
+  roll.addEventListener('click', () => {
+    const open = roll.classList.toggle('open');
+    roll.setAttribute('aria-expanded', open);
+    paper.style.maxHeight = open ? paper.scrollHeight + 'px' : '0';
+    setTimeout(build, 2300);
+  });
+})();
+</script>
+</body>
+</html>
